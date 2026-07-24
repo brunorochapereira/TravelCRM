@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Lead Manager</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--surface2:#f8fafc;--text:#152033;--muted:#667085;
+  --line:#e5eaf1;--primary:#155eef;--primary2:#0b4dcc;--green:#16834b;--yellow:#b26a00;
+  --orange:#c2410c;--red:#c62828;--shadow:0 8px 24px rgba(16,24,40,.08);--radius:16px
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:#101828;color:#fff;padding:24px 16px;position:sticky;top:0;height:100vh}
+.brand{font-size:20px;font-weight:800;margin:0 8px 28px}.brand small{display:block;font-size:12px;color:#98a2b3;font-weight:500;margin-top:4px}
+.nav button{width:100%;border:0;background:transparent;color:#cbd5e1;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0}
+.nav button.active,.nav button:hover{background:#1d2939;color:#fff}
+.main{padding:28px;min-width:0}.topbar{display:flex;gap:14px;justify-content:space-between;align-items:center;margin-bottom:22px}
+.topbar h1{margin:0;font-size:28px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:650}
+.btn:hover{border-color:#b8c3d3}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2)}
+.btn.danger{color:var(--red)}.btn.small{padding:7px 10px;font-size:13px}
+.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(6,minmax(145px,1fr));margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+.kpi .label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.kpi .value{font-size:28px;font-weight:800;margin-top:10px}.kpi .sub{font-size:12px;color:var(--muted);margin-top:5px}
+.sla-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.sla{padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.sla strong{font-size:22px}.sla span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.content-grid{grid-template-columns:1.3fr .7fr;margin-bottom:18px}.card h3{margin:0 0 14px;font-size:16px}
+.bar-row{display:grid;grid-template-columns:120px 1fr 42px;gap:10px;align-items:center;margin:10px 0;font-size:13px}.bar{height:9px;background:#edf1f6;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:var(--primary);border-radius:999px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:1040px}th,td{padding:12px 13px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index:1}tr:hover td{background:#fbfdff}
+.badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2f6;color:#344054}
+.badge.new{background:#e8f0ff;color:#155eef}.badge.contacted{background:#e9f8ef;color:#137a46}.badge.quoted{background:#fff4df;color:#9a5b00}
+.badge.closed{background:#e8f7ec;color:#157347}.badge.lost{background:#fdecec;color:#b42318}
+.timer{font-weight:800}.timer.green{color:var(--green)}.timer.yellow{color:var(--yellow)}.timer.orange{color:var(--orange)}.timer.red{color:var(--red)}
+.filters{display:grid;grid-template-columns:2fr repeat(6,1fr);gap:8px;margin-bottom:12px}.filters input,.filters select,.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #d0d5dd;border-radius:9px;background:#fff}
+.hidden{display:none!important}.empty{padding:30px;text-align:center;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(16,24,40,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-box{width:min(820px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modal-head h2{margin:0}.close{border:0;background:transparent;font-size:24px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.field label{display:block;font-size:12px;font-weight:750;color:#475467;margin-bottom:6px}.field.full{grid-column:1/-1}
+.timeline{border-left:2px solid #dbe3ee;padding-left:16px}.event{margin:0 0 16px;position:relative}.event:before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.event small{color:var(--muted)}.event p{margin:4px 0}.quick{display:flex;gap:6px;flex-wrap:wrap}
+.client-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.client-card h4{margin:0 0 6px}.client-card p{margin:4px 0;color:var(--muted);font-size:13px}
+.notice{padding:12px 14px;background:#eef4ff;border:1px solid #d6e4ff;border-radius:10px;margin-bottom:14px;color:#244ea5}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.app{display:block}.sidebar{height:auto;position:static;padding:14px}.brand{margin-bottom:10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.main{padding:16px}.topbar{align-items:flex-start}.kpis{grid-template-columns:repeat(2,1fr)}.sla-strip{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.client-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Travel Lead Manager<small>Operação comercial</small></div>
+    <nav class="nav">
+      <button data-view="dashboard" class="active">Dashboard</button>
+      <button data-view="leads">Leads</button>
+      <button data-view="clients">Clientes</button>
+      <button data-view="settings">Configuração</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <section id="view-dashboard">
+      <div class="topbar"><div><h1>Dashboard</h1><div id="periodLabel" style="color:var(--muted);margin-top:5px"></div></div>
+        <div class="actions">
+          <select id="dashPeriod" class="btn"><option value="today">Hoje</option><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="month">Este mês</option><option value="all">Todos</option></select>
+          <button class="btn primary" onclick="openLeadModal()">+ Nova lead</button>
+        </div>
+      </div>
+      <div class="grid kpis" id="kpis"></div>
+      <div class="sla-strip" id="slaStrip"></div>
+      <div class="grid content-grid">
+        <div class="card"><h3>Destinos mais pedidos</h3><div id="destBars"></div></div>
+        <div class="card"><h3>Canais mais utilizados</h3><div id="sourceBars"></div></div>
+      </div>
+      <div class="grid content-grid">
+        <div class="card"><h3>Motivos de perda</h3><div id="lossBars"></div></div>
+        <div class="card"><h3>Pendências do dia</h3><div id="pendingList"></div></div>
+      </div>
+    </section>
+
+    <section id="view-leads" class="hidden">
+      <div class="topbar"><h1>Leads</h1><div class="actions"><button class="btn" onclick="exportData()">Exportar JSON</button><button class="btn" onclick="document.getElementById('importFile').click()">Importar</button><input id="importFile" class="hidden" type="file" accept=".json"><button class="btn primary" onclick="openLeadModal()">+ Nova lead</button></div></div>
+      <div class="filters">
+        <input id="fSearch" placeholder="Pesquisar nome ou telefone">
+        <select id="fStatus"><option value="">Todos os estados</option></select>
+        <select id="fSource"><option value="">Todos os canais</option></select>
+        <select id="fConsultant"><option value="">Todos os consultores</option></select>
+        <select id="fDestination"><option value="">Todos os destinos</option></select>
+        <select id="fLoss"><option value="">Todos os motivos</option></select>
+        <select id="fSla"><option value="">Todos os SLA</option><option value="red">Fora de SLA</option><option value="orange">30 a 60 min</option><option value="yellow">15 a 30 min</option><option value="green">Até 15 min</option></select>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Entrada</th><th>Cliente</th><th>Canal</th><th>Destinos</th><th>Consultor</th><th>Estado</th><th>1.º contacto</th><th>Orçamento</th><th>Follow-up</th><th>Ações</th></tr></thead><tbody id="leadRows"></tbody></table></div>
+    </section>
+
+    <section id="view-clients" class="hidden">
+      <div class="topbar"><h1>Clientes</h1></div><div class="client-grid" id="clientGrid"></div>
+    </section>
+
+    <section id="view-settings" class="hidden">
+      <div class="topbar"><h1>Configuração</h1></div>
+      <div class="grid content-grid">
+        <div class="card"><h3>SLA do primeiro contacto</h3>
+          <div class="field"><label>Limite considerado mau (minutos)</label><input id="slaLimit" type="number" min="1" value="60"></div>
+          <p style="color:var(--muted)">Escala visual: verde até 15 min, amarelo entre 15 e 30, laranja entre 30 e 60, vermelho acima do limite.</p>
+          <button class="btn primary" onclick="saveSettings()">Guardar</button>
+        </div>
+        <div class="card"><h3>Dados</h3><p style="color:var(--muted)">Os dados ficam neste browser. Exporte regularmente uma cópia JSON.</p><button class="btn danger" onclick="resetData()">Repor dados iniciais</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="leadModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="modalTitle">Nova lead</h2><button class="close" onclick="closeModal()">×</button></div>
+    <form id="leadForm">
+      <input type="hidden" id="leadId">
+      <div class="form-grid">
+        <div class="field"><label>Nome *</label><input id="leadName" required></div>
+        <div class="field"><label>Telefone *</label><input id="leadPhone" required></div>
+        <div class="field"><label>Email</label><input id="leadEmail" type="email"></div>
+        <div class="field"><label>Canal *</label><select id="leadSource" required></select></div>
+        <div class="field full"><label>Destinos * (separar por vírgulas)</label><input id="leadDestinations" required placeholder="Maldivas, Zanzibar"></div>
+        <div class="field"><label>Data e hora de entrada *</label><input id="leadEnteredAt" type="datetime-local" required></div>
+        <div class="field"><label>Consultor *</label><select id="leadConsultant" required></select></div>
+        <div class="field"><label>Follow-up</label><input id="leadFollowUp" type="datetime-local"></div>
+        <div class="field"><label>Estado</label><select id="leadStatus"></select></div>
+        <div class="field full"><label>Nota inicial</label><textarea id="leadNote" rows="3"></textarea></div>
+      </div>
+      <div class="actions" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn" onclick="closeModal()">Cancelar</button><button class="btn primary" type="submit">Guardar</button></div>
+    </form>
+    <div id="leadDetail" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+const SEED = [{"id": "L0001", "clientId": "C0001", "name": "Paula Ferreira", "phone": "910884975", "email": "", "source": "Whatsapp", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T10:03", "createdAt": "2026-07-15T10:03", "contactedAt": "2026-07-15T12:00", "quotedAt": "2026-07-15T12:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0002", "clientId": "C0002", "name": "Catarina Malheiro", "phone": "913511144", "email": "", "source": "Instagram", "destinations": ["Disney"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T11:45", "createdAt": "2026-07-15T11:45", "contactedAt": "2026-07-15T11:45", "quotedAt": null, "closedAt": null, "lostAt": "2026-07-15T11:45", "status": "Perdida", "lossReason": "Outro", "followUpAt": null, "notes": [], "events": []}, {"id": "L0003", "clientId": "C0003", "name": "Rafaela Marques", "phone": "916477348", "email": "", "source": "Instagram", "destinations": ["Maldivas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T13:00", "createdAt": "2026-07-15T13:00", "contactedAt": "2026-07-15T13:00", "quotedAt": null, "closedAt": null, "lostAt": "2026-07-15T13:00", "status": "Perdida", "lossReason": "Outro", "followUpAt": null, "notes": [], "events": []}, {"id": "L0004", "clientId": "C0004", "name": "Marta", "phone": "914599559", "email": "", "source": "Instagram", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T15:00", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0005", "clientId": "C0005", "name": "Mariana Maia", "phone": "911888581", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T09:49", "createdAt": "2026-07-15T09:49", "contactedAt": "2026-07-15T13:00", "quotedAt": "2026-07-15T15:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0006", "clientId": "C0006", "name": "Mónica Carvalho", "phone": "913874103", "email": "", "source": "Instagram", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T12:00", "createdAt": "2026-07-15T12:00", "contactedAt": "2026-07-15T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0007", "clientId": "C0007", "name": "Sara Almeida", "phone": "969275792", "email": "", "source": "Instagram", "destinations": ["Disney"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T15:20", "quotedAt": "2026-07-15T15:20", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0008", "clientId": "C0008", "name": "Ana Luisa", "phone": "919262346", "email": "", "source": "Whatsapp", "destinations": ["Caraibas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T16:20", "quotedAt": "2026-07-15T18:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0010", "clientId": "C0010", "name": "Claudia Rodrigues", "phone": "916159088", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T19:00", "createdAt": "2026-07-15T19:00", "contactedAt": "2026-07-16T10:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0011", "clientId": "C0011", "name": "Gustavo Pedrosa", "phone": "919012603", "email": "", "source": "Instagram", "destinations": ["Cruzeiro"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T19:00", "createdAt": "2026-07-15T19:00", "contactedAt": "2026-07-16T10:30", "quotedAt": "2026-07-16T11:50", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0012", "clientId": "C0012", "name": "Jéssica Santos", "phone": "917328867", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T13:00", "createdAt": "2026-07-16T13:00", "contactedAt": "2026-07-16T13:00", "quotedAt": "2026-07-16T14:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0013", "clientId": "C0013", "name": "Luciana Coelho", "phone": "924064096", "email": "", "source": "Instagram", "destinations": ["Algarve"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T13:00", "createdAt": "2026-07-16T13:00", "contactedAt": "2026-07-16T14:00", "quotedAt": "2026-07-16T14:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0014", "clientId": "C0014", "name": "Cláudia Giesta", "phone": "932526145", "email": "", "source": "Whatsapp", "destinations": ["Tunisia"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T12:00", "createdAt": "2026-07-16T12:00", "contactedAt": "2026-07-16T15:00", "quotedAt": "2026-07-16T15:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0015", "clientId": "C0015", "name": "Rute Delgado", "phone": "929003944", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T11:00", "createdAt": "2026-07-16T11:00", "contactedAt": "2026-07-16T15:30", "quotedAt": "2026-07-16T15:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0016", "clientId": "C0016", "name": "Patricia Alves", "phone": "913555749", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T12:00", "createdAt": "2026-07-16T12:00", "contactedAt": "2026-07-16T16:00", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0017", "clientId": "C0017", "name": "Paulo Martins", "phone": "935379291", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T17:30", "createdAt": "2026-07-16T17:30", "contactedAt": "2026-07-16T17:30", "quotedAt": "2026-07-16T17:40", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0019", "clientId": "C0019", "name": "Mariana Leitão", "phone": "968614240", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T18:30", "createdAt": "2026-07-16T18:30", "contactedAt": "2026-07-17T10:00", "quotedAt": "2026-07-17T10:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0020", "clientId": "C0020", "name": "Mariana Torres", "phone": "930594375", "email": "", "source": "Whatsapp", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T09:30", "createdAt": "2026-07-17T09:30", "contactedAt": "2026-07-17T10:30", "quotedAt": "2026-07-17T10:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0021", "clientId": "C0021", "name": "Teresa Coelho", "phone": "934396327", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T14:30", "createdAt": "2026-07-17T14:30", "contactedAt": "2026-07-17T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0022", "clientId": "C0022", "name": "Mar banhos", "phone": "", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T14:00", "createdAt": "2026-07-17T14:00", "contactedAt": "2026-07-17T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}];
+const SOURCES = ["Instagram","Facebook","WhatsApp","Website","Telefone","Email","Referência"];
+const STATUSES = ["Nova","Contactada","Orçamento enviado","Fechada","Perdida"];
+const LOSS_REASONS = ["Preço elevado","Escolheu outra agência","Não respondeu","Datas indisponíveis","Destino indisponível","Outro"];
+const CONSULTANTS = ["Consultor 1","Consultor 2","Consultor 3"];
+let leads = JSON.parse(localStorage.getItem("tlm_leads") || "null") || structuredClone(SEED);
+let settings = JSON.parse(localStorage.getItem("tlm_settings") || '{"slaLimit":60}');
+let currentView="dashboard";
+
+function save(){localStorage.setItem("tlm_leads",JSON.stringify(leads));}
+function nowLocalInput(d=new Date()){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,16)}
+function dt(v){return v?new Date(v):null}
+function fmt(v){if(!v)return "—";return new Intl.DateTimeFormat("pt-PT",{dateStyle:"short",timeStyle:"short"}).format(new Date(v))}
+function minutesBetween(a,b){if(!a||!b)return null;return Math.max(0,Math.round((new Date(b)-new Date(a))/60000))}
+function elapsedLabel(min){if(min===null)return "—";if(min<60)return min+" min";const h=Math.floor(min/60),m=min%60;return h+"h"+(m?(" "+m+"m"):"")}
+function slaClass(lead){
+  if(lead.contactedAt) return "done";
+  const min=minutesBetween(lead.enteredAt,new Date());
+  if(min<=15)return "green";if(min<=30)return "yellow";if(min<=settings.slaLimit)return "orange";return "red";
+}
+function statusClass(s){return s==="Nova"?"new":s==="Contactada"?"contacted":s==="Orçamento enviado"?"quoted":s==="Fechada"?"closed":"lost"}
+function logEvent(lead,type,text){lead.events ||= [];lead.events.unshift({at:new Date().toISOString(),type,text});}
+function normalizedPhone(v){return (v||"").replace(/\D/g,"").replace(/^351/,"")}
+
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function showView(v){
+  currentView=v;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));
+  document.querySelectorAll("main>section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById("view-"+v).classList.remove("hidden");renderAll();
+}
+function periodLeads(){
+  const val=document.getElementById("dashPeriod")?.value||"30", now=new Date();let start=null;
+  if(val==="today")start=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  if(val==="7"||val==="30")start=new Date(now.getTime()-Number(val)*86400000);
+  if(val==="month")start=new Date(now.getFullYear(),now.getMonth(),1);
+  const arr=start?leads.filter(l=>new Date(l.enteredAt)>=start):leads;
+  document.getElementById("periodLabel").textContent=val==="today"?"Hoje":val==="month"?"Mês atual":val==="all"?"Todos os registos":"Últimos "+val+" dias";
+  return arr;
+}
+function avg(arr){const v=arr.filter(x=>x!==null&&!isNaN(x));return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):null}
+function renderDashboard(){
+  const arr=periodLeads(), todayStart=new Date();todayStart.setHours(0,0,0,0);
+  const today=leads.filter(l=>new Date(l.enteredAt)>=todayStart);
+  const contactAvg=avg(arr.map(l=>minutesBetween(l.enteredAt,l.contactedAt)));
+  const quoteAvg=avg(arr.map(l=>minutesBetween(l.contactedAt,l.quotedAt)));
+  const closed=arr.filter(l=>l.status==="Fechada").length, lost=arr.filter(l=>l.status==="Perdida").length;
+  const final=closed+lost; const conv=final?Math.round(closed/final*100):0;
+  const waiting=leads.filter(l=>!l.contactedAt&&l.status!=="Perdida"&&l.status!=="Fechada").length;
+  const k=[
+    ["Leads hoje",today.length,"entradas registadas"],
+    ["1.º contacto",elapsedLabel(contactAvg),"tempo médio"],
+    ["Até orçamento",elapsedLabel(quoteAvg),"após contacto"],
+    ["Conversão",conv+"%","fechadas / decisões"],
+    ["Fechadas",closed,"no período"],
+    ["Pendentes",waiting,"sem contacto"]
+  ];
+  document.getElementById("kpis").innerHTML=k.map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join("");
+  const counts={green:0,yellow:0,orange:0,red:0};
+  leads.filter(l=>!l.contactedAt&&l.status!=="Perdida"&&l.status!=="Fechada").forEach(l=>counts[slaClass(l)]++);
+  document.getElementById("slaStrip").innerHTML=[
+    ["green","Até 15 minutos"],["yellow","15 a 30 minutos"],["orange","30 a 60 minutos"],["red","Fora de SLA"]
+  ].map(([c,t])=>`<div class="sla"><strong class="timer ${c}">${counts[c]}</strong><span>${t}</span></div>`).join("");
+  renderBars("destBars",arr.flatMap(l=>l.destinations||[]));
+  renderBars("sourceBars",arr.map(l=>l.source));
+  renderBars("lossBars",arr.filter(l=>l.status==="Perdida").map(l=>l.lossReason||"Sem motivo"));
+  const pending=[
+    ["Sem primeiro contacto",leads.filter(l=>!l.contactedAt&&l.status!=="Fechada"&&l.status!=="Perdida").length],
+    ["Sem orçamento",leads.filter(l=>l.contactedAt&&!l.quotedAt&&!["Fechada","Perdida"].includes(l.status)).length],
+    ["Follow-ups vencidos",leads.filter(l=>l.followUpAt&&new Date(l.followUpAt)<new Date()&&!["Fechada","Perdida"].includes(l.status)).length],
+    ["Follow-ups hoje",leads.filter(l=>l.followUpAt&&new Date(l.followUpAt)>=todayStart&&new Date(l.followUpAt)<new Date(todayStart.getTime()+86400000)).length]
+  ];
+  document.getElementById("pendingList").innerHTML=pending.map(x=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join("");
+}
+function renderBars(id,items){
+  const m={};items.filter(Boolean).forEach(x=>m[x]=(m[x]||0)+1);const sorted=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=sorted[0]?.[1]||1;
+  document.getElementById(id).innerHTML=sorted.length?sorted.map(([k,v])=>`<div class="bar-row"><span title="${k}">${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><strong>${v}</strong></div>`).join(""):`<div class="empty">Sem dados</div>`;
+}
+function populateFilters(){
+  const opts=(arr)=>arr.map(x=>`<option value="${x}">${x}</option>`).join("");
+  document.getElementById("fStatus").innerHTML='<option value="">Todos os estados</option>'+opts(STATUSES);
+  document.getElementById("fSource").innerHTML='<option value="">Todos os canais</option>'+opts(SOURCES);
+  document.getElementById("fConsultant").innerHTML='<option value="">Todos os consultores</option>'+opts(CONSULTANTS);
+  const ds=[...new Set(leads.flatMap(l=>l.destinations||[]))].sort();
+  document.getElementById("fDestination").innerHTML='<option value="">Todos os destinos</option>'+opts(ds);
+  document.getElementById("fLoss").innerHTML='<option value="">Todos os motivos</option>'+opts(LOSS_REASONS);
+}
+function filteredLeads(){
+  const q=document.getElementById("fSearch").value.toLowerCase().trim();
+  return leads.filter(l=>
+    (!q||l.name.toLowerCase().includes(q)||normalizedPhone(l.phone).includes(normalizedPhone(q)))&&
+    (!fStatus.value||l.status===fStatus.value)&&(!fSource.value||l.source===fSource.value)&&
+    (!fConsultant.value||l.consultant===fConsultant.value)&&(!fDestination.value||(l.destinations||[]).includes(fDestination.value))&&
+    (!fLoss.value||l.lossReason===fLoss.value)&&(!fSla.value||slaClass(l)===fSla.value)
+  ).sort((a,b)=>new Date(a.enteredAt)-new Date(b.enteredAt));
+}
+function renderLeads(){
+  populateFilters();const arr=filteredLeads();
+  document.getElementById("leadRows").innerHTML=arr.length?arr.map(l=>{
+    const response=l.contactedAt?minutesBetween(l.enteredAt,l.contactedAt):minutesBetween(l.enteredAt,new Date());
+    const sc=l.contactedAt?"green":slaClass(l);
+    return `<tr>
+      <td>${fmt(l.enteredAt)}</td><td><strong>${l.name}</strong><br><span style="color:var(--muted)">${l.phone||"Sem telefone"}</span></td>
+      <td>${l.source}</td><td>${(l.destinations||[]).join(", ")}</td><td>${l.consultant}</td>
+      <td><span class="badge ${statusClass(l.status)}">${l.status}</span>${l.lossReason?`<br><small>${l.lossReason}</small>`:""}</td>
+      <td><span class="timer ${sc}">${elapsedLabel(response)}</span></td>
+      <td>${l.quotedAt?elapsedLabel(minutesBetween(l.contactedAt,l.quotedAt)):"—"}</td><td>${fmt(l.followUpAt)}</td>
+      <td><div class="quick">
+        <button class="btn small" onclick="location.href='tel:${l.phone}'">Ligar</button>
+        ${!l.contactedAt?`<button class="btn small" onclick="markContact('${l.id}')">1.º contacto</button>`:""}
+        ${l.contactedAt&&!l.quotedAt?`<button class="btn small" onclick="markQuoted('${l.id}')">Orçamento</button>`:""}
+        ${!["Fechada","Perdida"].includes(l.status)?`<button class="btn small" onclick="markClosed('${l.id}')">Fechada</button><button class="btn small danger" onclick="markLost('${l.id}')">Perdida</button>`:""}
+        <button class="btn small" onclick="openLeadModal('${l.id}',true)">Abrir</button>
+      </div></td></tr>`;
+  }).join(""):`<tr><td colspan="10" class="empty">Sem resultados</td></tr>`;
+}
+function renderClients(){
+  const map={};leads.forEach(l=>{const key=normalizedPhone(l.phone)||l.clientId;map[key]??={name:l.name,phone:l.phone,email:l.email,leads:[]};map[key].leads.push(l)});
+  const clients=Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById("clientGrid").innerHTML=clients.map(c=>{
+    const closed=c.leads.filter(l=>l.status==="Fechada").length;
+    return `<div class="card client-card"><h4>${c.name}</h4><p>${c.phone||"Sem telefone"}</p><p>${c.leads.length} lead(s), ${closed} fechada(s)</p><p>Destinos: ${[...new Set(c.leads.flatMap(l=>l.destinations))].join(", ")}</p></div>`;
+  }).join("");
+}
+function renderAll(){if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads();if(currentView==="clients")renderClients();document.getElementById("slaLimit").value=settings.slaLimit}
+function openLeadModal(id=null,detail=false){
+  const modal=document.getElementById("leadModal");modal.classList.remove("hidden");leadForm.classList.remove("hidden");leadDetail.classList.add("hidden");
+  leadSource.innerHTML=SOURCES.map(x=>`<option>${x}</option>`).join("");leadConsultant.innerHTML=CONSULTANTS.map(x=>`<option>${x}</option>`).join("");leadStatus.innerHTML=STATUSES.map(x=>`<option>${x}</option>`).join("");
+  const l=id?leads.find(x=>x.id===id):null;
+  modalTitle.textContent=l?l.name:"Nova lead";leadId.value=l?.id||"";leadName.value=l?.name||"";leadPhone.value=l?.phone||"";leadEmail.value=l?.email||"";leadSource.value=l?.source||"Instagram";
+  leadDestinations.value=(l?.destinations||[]).join(", ");leadEnteredAt.value=l?.enteredAt?.slice(0,16)||nowLocalInput();leadConsultant.value=l?.consultant||CONSULTANTS[0];leadFollowUp.value=l?.followUpAt?.slice(0,16)||"";leadStatus.value=l?.status||"Nova";leadNote.value="";
+  if(l&&detail)renderLeadDetail(l);
+}
+function renderLeadDetail(l){
+  leadForm.classList.add("hidden");leadDetail.classList.remove("hidden");
+  const events=[...(l.events||[])];if(l.enteredAt)events.push({at:l.enteredAt,text:"Lead criada"});if(l.contactedAt)events.push({at:l.contactedAt,text:"Primeiro contacto efetuado"});if(l.quotedAt)events.push({at:l.quotedAt,text:"Orçamento enviado"});if(l.closedAt)events.push({at:l.closedAt,text:"Lead fechada"});if(l.lostAt)events.push({at:l.lostAt,text:"Lead perdida"});
+  events.sort((a,b)=>new Date(b.at)-new Date(a.at));
+  leadDetail.innerHTML=`<div class="notice"><strong>${l.status}</strong> · ${l.source} · ${(l.destinations||[]).join(", ")} · ${l.consultant}</div>
+  <div class="actions" style="margin-bottom:18px"><button class="btn" onclick="openLeadModal('${l.id}',false)">Editar</button>${!l.contactedAt?`<button class="btn" onclick="markContact('${l.id}')">Primeiro contacto</button>`:""}${l.contactedAt&&!l.quotedAt?`<button class="btn" onclick="markQuoted('${l.id}')">Orçamento enviado</button>`:""}<button class="btn" onclick="addNote('${l.id}')">Adicionar nota</button></div>
+  <h3>Histórico</h3><div class="timeline">${events.map(e=>`<div class="event"><small>${fmt(e.at)}</small><p>${e.text}</p></div>`).join("")||'<div class="empty">Sem eventos</div>'}</div>`;
+}
+function closeModal(){leadModal.classList.add("hidden")}
+leadForm.onsubmit=e=>{
+  e.preventDefault();const id=leadId.value;let l=id?leads.find(x=>x.id===id):null;const phone=normalizedPhone(leadPhone.value);
+  if(!l){l={id:"L"+Date.now(),clientId:"C"+Date.now(),events:[],notes:[],createdAt:new Date().toISOString(),contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:""};leads.push(l);logEvent(l,"create","Lead registada no CRM")}
+  const existing=leads.find(x=>x.id!==l.id&&normalizedPhone(x.phone)===phone);if(existing)l.clientId=existing.clientId;
+  Object.assign(l,{name:leadName.value.trim(),phone,email:leadEmail.value.trim(),source:leadSource.value,destinations:leadDestinations.value.split(",").map(x=>x.trim()).filter(Boolean),enteredAt:new Date(leadEnteredAt.value).toISOString(),consultant:leadConsultant.value,followUpAt:leadFollowUp.value?new Date(leadFollowUp.value).toISOString():null,status:leadStatus.value});
+  if(leadNote.value.trim()){l.notes.push({at:new Date().toISOString(),text:leadNote.value.trim()});logEvent(l,"note",leadNote.value.trim())}
+  save();closeModal();renderAll();
+}
+function markContact(id){const l=leads.find(x=>x.id===id);if(!l||l.contactedAt)return;l.contactedAt=new Date().toISOString();l.status="Contactada";logEvent(l,"contact","Primeiro contacto efetuado por "+l.consultant);save();closeModal();renderAll()}
+function markQuoted(id){const l=leads.find(x=>x.id===id);if(!l||l.quotedAt)return;l.quotedAt=new Date().toISOString();l.status="Orçamento enviado";logEvent(l,"quote","Orçamento enviado");save();closeModal();renderAll()}
+function markClosed(id){const l=leads.find(x=>x.id===id);if(!l)return;l.status="Fechada";l.closedAt=new Date().toISOString();logEvent(l,"closed","Lead fechada");save();renderAll()}
+function markLost(id){const l=leads.find(x=>x.id===id);if(!l)return;const r=prompt("Motivo de perda:\n"+LOSS_REASONS.join(" | "),"Preço elevado");if(!r)return;l.status="Perdida";l.lossReason=r;l.lostAt=new Date().toISOString();logEvent(l,"lost","Lead perdida: "+r);save();renderAll()}
+function addNote(id){const l=leads.find(x=>x.id===id);const n=prompt("Nota");if(!n)return;l.notes.push({at:new Date().toISOString(),text:n});logEvent(l,"note",n);save();renderLeadDetail(l)}
+function exportData(){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),leads,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="travel-leads-backup.json";a.click();URL.revokeObjectURL(a.href)}
+importFile.onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!Array.isArray(data.leads))throw new Error();leads=data.leads;settings=data.settings||settings;save();localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Dados importados.")}catch{alert("Ficheiro inválido.")}}
+function saveSettings(){settings.slaLimit=Math.max(1,Number(slaLimit.value)||60);localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll()}
+function resetData(){if(confirm("Repor os dados importados do Excel?")){leads=structuredClone(SEED);save();renderAll()}}
+["fSearch","fStatus","fSource","fConsultant","fDestination","fLoss","fSla"].forEach(id=>document.getElementById(id).addEventListener("input",renderLeads));
+dashPeriod.onchange=renderDashboard;
+setInterval(()=>{if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads()},60000);
+renderAll();
+</script>
+</body>
+</html>
