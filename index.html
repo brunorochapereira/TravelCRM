@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <title>Travel Lead Manager</title>
 <style>
 :root{
@@ -138,18 +139,30 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
   </div>
 </div>
 
+<div id="lossModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="lossModalTitle">
+  <div class="modal-box" style="width:min(520px,100%)">
+    <div class="modal-head"><h2 id="lossModalTitle">Marcar lead como perdida</h2><button class="close" type="button" onclick="closeLossModal()" aria-label="Fechar">×</button></div>
+    <input type="hidden" id="lossLeadId">
+    <div class="field"><label for="lossReasonSelect">Motivo de perda *</label><select id="lossReasonSelect" required></select></div>
+    <div class="actions" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn" onclick="closeLossModal()">Cancelar</button><button type="button" class="btn danger" onclick="confirmLost()">Confirmar perda</button></div>
+  </div>
+</div>
+
 <script>
 const SEED = [{"id": "L0001", "clientId": "C0001", "name": "Paula Ferreira", "phone": "910884975", "email": "", "source": "Whatsapp", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T10:03", "createdAt": "2026-07-15T10:03", "contactedAt": "2026-07-15T12:00", "quotedAt": "2026-07-15T12:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0002", "clientId": "C0002", "name": "Catarina Malheiro", "phone": "913511144", "email": "", "source": "Instagram", "destinations": ["Disney"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T11:45", "createdAt": "2026-07-15T11:45", "contactedAt": "2026-07-15T11:45", "quotedAt": null, "closedAt": null, "lostAt": "2026-07-15T11:45", "status": "Perdida", "lossReason": "Outro", "followUpAt": null, "notes": [], "events": []}, {"id": "L0003", "clientId": "C0003", "name": "Rafaela Marques", "phone": "916477348", "email": "", "source": "Instagram", "destinations": ["Maldivas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T13:00", "createdAt": "2026-07-15T13:00", "contactedAt": "2026-07-15T13:00", "quotedAt": null, "closedAt": null, "lostAt": "2026-07-15T13:00", "status": "Perdida", "lossReason": "Outro", "followUpAt": null, "notes": [], "events": []}, {"id": "L0004", "clientId": "C0004", "name": "Marta", "phone": "914599559", "email": "", "source": "Instagram", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T15:00", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0005", "clientId": "C0005", "name": "Mariana Maia", "phone": "911888581", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T09:49", "createdAt": "2026-07-15T09:49", "contactedAt": "2026-07-15T13:00", "quotedAt": "2026-07-15T15:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0006", "clientId": "C0006", "name": "Mónica Carvalho", "phone": "913874103", "email": "", "source": "Instagram", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T12:00", "createdAt": "2026-07-15T12:00", "contactedAt": "2026-07-15T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0007", "clientId": "C0007", "name": "Sara Almeida", "phone": "969275792", "email": "", "source": "Instagram", "destinations": ["Disney"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T15:20", "quotedAt": "2026-07-15T15:20", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0008", "clientId": "C0008", "name": "Ana Luisa", "phone": "919262346", "email": "", "source": "Whatsapp", "destinations": ["Caraibas"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T15:00", "createdAt": "2026-07-15T15:00", "contactedAt": "2026-07-15T16:20", "quotedAt": "2026-07-15T18:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0010", "clientId": "C0010", "name": "Claudia Rodrigues", "phone": "916159088", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T19:00", "createdAt": "2026-07-15T19:00", "contactedAt": "2026-07-16T10:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0011", "clientId": "C0011", "name": "Gustavo Pedrosa", "phone": "919012603", "email": "", "source": "Instagram", "destinations": ["Cruzeiro"], "consultant": "Consultor 1", "enteredAt": "2026-07-15T19:00", "createdAt": "2026-07-15T19:00", "contactedAt": "2026-07-16T10:30", "quotedAt": "2026-07-16T11:50", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0012", "clientId": "C0012", "name": "Jéssica Santos", "phone": "917328867", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T13:00", "createdAt": "2026-07-16T13:00", "contactedAt": "2026-07-16T13:00", "quotedAt": "2026-07-16T14:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0013", "clientId": "C0013", "name": "Luciana Coelho", "phone": "924064096", "email": "", "source": "Instagram", "destinations": ["Algarve"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T13:00", "createdAt": "2026-07-16T13:00", "contactedAt": "2026-07-16T14:00", "quotedAt": "2026-07-16T14:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0014", "clientId": "C0014", "name": "Cláudia Giesta", "phone": "932526145", "email": "", "source": "Whatsapp", "destinations": ["Tunisia"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T12:00", "createdAt": "2026-07-16T12:00", "contactedAt": "2026-07-16T15:00", "quotedAt": "2026-07-16T15:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0015", "clientId": "C0015", "name": "Rute Delgado", "phone": "929003944", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T11:00", "createdAt": "2026-07-16T11:00", "contactedAt": "2026-07-16T15:30", "quotedAt": "2026-07-16T15:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0016", "clientId": "C0016", "name": "Patricia Alves", "phone": "913555749", "email": "", "source": "Whatsapp", "destinations": ["Sem Destino"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T12:00", "createdAt": "2026-07-16T12:00", "contactedAt": "2026-07-16T16:00", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0017", "clientId": "C0017", "name": "Paulo Martins", "phone": "935379291", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T17:30", "createdAt": "2026-07-16T17:30", "contactedAt": "2026-07-16T17:30", "quotedAt": "2026-07-16T17:40", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0019", "clientId": "C0019", "name": "Mariana Leitão", "phone": "968614240", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-16T18:30", "createdAt": "2026-07-16T18:30", "contactedAt": "2026-07-17T10:00", "quotedAt": "2026-07-17T10:00", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "Preço Alto", "followUpAt": null, "notes": [], "events": []}, {"id": "L0020", "clientId": "C0020", "name": "Mariana Torres", "phone": "930594375", "email": "", "source": "Whatsapp", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T09:30", "createdAt": "2026-07-17T09:30", "contactedAt": "2026-07-17T10:30", "quotedAt": "2026-07-17T10:30", "closedAt": null, "lostAt": null, "status": "Orçamento enviado", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0021", "clientId": "C0021", "name": "Teresa Coelho", "phone": "934396327", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T14:30", "createdAt": "2026-07-17T14:30", "contactedAt": "2026-07-17T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}, {"id": "L0022", "clientId": "C0022", "name": "Mar banhos", "phone": "", "email": "", "source": "Instagram", "destinations": ["Ilhas Espanholas"], "consultant": "Consultor 1", "enteredAt": "2026-07-17T14:00", "createdAt": "2026-07-17T14:00", "contactedAt": "2026-07-17T14:30", "quotedAt": null, "closedAt": null, "lostAt": null, "status": "Contactada", "lossReason": "", "followUpAt": null, "notes": [], "events": []}];
 const SOURCES = ["Instagram","Facebook","WhatsApp","Website","Telefone","Email","Referência"];
 const STATUSES = ["Nova","Contactada","Orçamento enviado","Fechada","Perdida"];
 const LOSS_REASONS = ["Preço elevado","Escolheu outra agência","Não respondeu","Datas indisponíveis","Destino indisponível","Outro"];
 const CONSULTANTS = ["Consultor 1","Consultor 2","Consultor 3"];
-let leads = JSON.parse(localStorage.getItem("tlm_leads") || "null") || structuredClone(SEED);
+let leads = JSON.parse(localStorage.getItem("tlm_leads") || "null") || (typeof structuredClone==="function"?structuredClone(SEED):JSON.parse(JSON.stringify(SEED)));
 let settings = JSON.parse(localStorage.getItem("tlm_settings") || '{"slaLimit":60}');
 let currentView="dashboard";
 
 function save(){localStorage.setItem("tlm_leads",JSON.stringify(leads));}
 function nowLocalInput(d=new Date()){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,16)}
+function toLocalInput(v){if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";return nowLocalInput(d)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function escAttr(v){return esc(v)}
 function dt(v){return v?new Date(v):null}
 function fmt(v){if(!v)return "—";return new Intl.DateTimeFormat("pt-PT",{dateStyle:"short",timeStyle:"short"}).format(new Date(v))}
 function minutesBetween(a,b){if(!a||!b)return null;return Math.max(0,Math.round((new Date(b)-new Date(a))/60000))}
@@ -214,43 +227,48 @@ function renderDashboard(){
 }
 function renderBars(id,items){
   const m={};items.filter(Boolean).forEach(x=>m[x]=(m[x]||0)+1);const sorted=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=sorted[0]?.[1]||1;
-  document.getElementById(id).innerHTML=sorted.length?sorted.map(([k,v])=>`<div class="bar-row"><span title="${k}">${k}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><strong>${v}</strong></div>`).join(""):`<div class="empty">Sem dados</div>`;
+  document.getElementById(id).innerHTML=sorted.length?sorted.map(([k,v])=>`<div class="bar-row"><span title="${escAttr(k)}">${esc(k)}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><strong>${v}</strong></div>`).join(""):`<div class="empty">Sem dados</div>`;
 }
 function populateFilters(){
-  const opts=(arr)=>arr.map(x=>`<option value="${x}">${x}</option>`).join("");
+  const ids=["fStatus","fSource","fConsultant","fDestination","fLoss"];const previous=Object.fromEntries(ids.map(id=>[id,document.getElementById(id).value]));
+  const opts=(arr)=>arr.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
   document.getElementById("fStatus").innerHTML='<option value="">Todos os estados</option>'+opts(STATUSES);
   document.getElementById("fSource").innerHTML='<option value="">Todos os canais</option>'+opts(SOURCES);
   document.getElementById("fConsultant").innerHTML='<option value="">Todos os consultores</option>'+opts(CONSULTANTS);
   const ds=[...new Set(leads.flatMap(l=>l.destinations||[]))].sort();
   document.getElementById("fDestination").innerHTML='<option value="">Todos os destinos</option>'+opts(ds);
   document.getElementById("fLoss").innerHTML='<option value="">Todos os motivos</option>'+opts(LOSS_REASONS);
+  ids.forEach(id=>{if([...document.getElementById(id).options].some(o=>o.value===previous[id]))document.getElementById(id).value=previous[id]});
 }
 function filteredLeads(){
   const q=document.getElementById("fSearch").value.toLowerCase().trim();
-  return leads.filter(l=>
-    (!q||l.name.toLowerCase().includes(q)||normalizedPhone(l.phone).includes(normalizedPhone(q)))&&
+  const qDigits=normalizedPhone(q);
+  return leads.filter(l=>{
+    const nameMatch=!q||String(l.name||"").toLowerCase().includes(q);
+    const phoneMatch=!!qDigits&&normalizedPhone(l.phone).includes(qDigits);
+    return (nameMatch||phoneMatch)&&
     (!fStatus.value||l.status===fStatus.value)&&(!fSource.value||l.source===fSource.value)&&
     (!fConsultant.value||l.consultant===fConsultant.value)&&(!fDestination.value||(l.destinations||[]).includes(fDestination.value))&&
-    (!fLoss.value||l.lossReason===fLoss.value)&&(!fSla.value||slaClass(l)===fSla.value)
-  ).sort((a,b)=>new Date(a.enteredAt)-new Date(b.enteredAt));
+    (!fLoss.value||l.lossReason===fLoss.value)&&(!fSla.value||slaClass(l)===fSla.value);
+  }).sort((a,b)=>new Date(a.enteredAt)-new Date(b.enteredAt));
 }
 function renderLeads(){
   populateFilters();const arr=filteredLeads();
   document.getElementById("leadRows").innerHTML=arr.length?arr.map(l=>{
     const response=l.contactedAt?minutesBetween(l.enteredAt,l.contactedAt):minutesBetween(l.enteredAt,new Date());
-    const sc=l.contactedAt?"green":slaClass(l);
+    const sc=l.contactedAt?"green":slaClass(l);const safeId=escAttr(l.id);
     return `<tr>
-      <td>${fmt(l.enteredAt)}</td><td><strong>${l.name}</strong><br><span style="color:var(--muted)">${l.phone||"Sem telefone"}</span></td>
-      <td>${l.source}</td><td>${(l.destinations||[]).join(", ")}</td><td>${l.consultant}</td>
-      <td><span class="badge ${statusClass(l.status)}">${l.status}</span>${l.lossReason?`<br><small>${l.lossReason}</small>`:""}</td>
+      <td>${fmt(l.enteredAt)}</td><td><strong>${esc(l.name)}</strong><br><span style="color:var(--muted)">${esc(l.phone||"Sem telefone")}</span></td>
+      <td>${esc(l.source)}</td><td>${esc((l.destinations||[]).join(", "))}</td><td>${esc(l.consultant)}</td>
+      <td><span class="badge ${statusClass(l.status)}">${esc(l.status)}</span>${l.lossReason?`<br><small>${esc(l.lossReason)}</small>`:""}</td>
       <td><span class="timer ${sc}">${elapsedLabel(response)}</span></td>
       <td>${l.quotedAt?elapsedLabel(minutesBetween(l.contactedAt,l.quotedAt)):"—"}</td><td>${fmt(l.followUpAt)}</td>
       <td><div class="quick">
-        <button class="btn small" onclick="location.href='tel:${l.phone}'">Ligar</button>
-        ${!l.contactedAt?`<button class="btn small" onclick="markContact('${l.id}')">1.º contacto</button>`:""}
-        ${l.contactedAt&&!l.quotedAt?`<button class="btn small" onclick="markQuoted('${l.id}')">Orçamento</button>`:""}
-        ${!["Fechada","Perdida"].includes(l.status)?`<button class="btn small" onclick="markClosed('${l.id}')">Fechada</button><button class="btn small danger" onclick="markLost('${l.id}')">Perdida</button>`:""}
-        <button class="btn small" onclick="openLeadModal('${l.id}',true)">Abrir</button>
+        <button class="btn small" onclick="location.href='tel:${escAttr(normalizedPhone(l.phone))}'">Ligar</button>
+        ${!l.contactedAt?`<button class="btn small" onclick="markContact('${safeId}')">1.º contacto</button>`:""}
+        ${l.contactedAt&&!l.quotedAt?`<button class="btn small" onclick="markQuoted('${safeId}')">Orçamento</button>`:""}
+        ${!["Fechada","Perdida"].includes(l.status)?`<button class="btn small" onclick="markClosed('${safeId}')">Fechada</button><button class="btn small danger" onclick="markLost('${safeId}')">Perdida</button>`:""}
+        <button class="btn small" onclick="openLeadModal('${safeId}',true)">Abrir</button>
       </div></td></tr>`;
   }).join(""):`<tr><td colspan="10" class="empty">Sem resultados</td></tr>`;
 }
@@ -259,44 +277,53 @@ function renderClients(){
   const clients=Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
   document.getElementById("clientGrid").innerHTML=clients.map(c=>{
     const closed=c.leads.filter(l=>l.status==="Fechada").length;
-    return `<div class="card client-card"><h4>${c.name}</h4><p>${c.phone||"Sem telefone"}</p><p>${c.leads.length} lead(s), ${closed} fechada(s)</p><p>Destinos: ${[...new Set(c.leads.flatMap(l=>l.destinations))].join(", ")}</p></div>`;
+    return `<div class="card client-card"><h4>${esc(c.name)}</h4><p>${esc(c.phone||"Sem telefone")}</p><p>${c.leads.length} lead(s), ${closed} fechada(s)</p><p>Destinos: ${esc([...new Set(c.leads.flatMap(l=>l.destinations))].join(", "))}</p></div>`;
   }).join("");
 }
 function renderAll(){if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads();if(currentView==="clients")renderClients();document.getElementById("slaLimit").value=settings.slaLimit}
 function openLeadModal(id=null,detail=false){
   const modal=document.getElementById("leadModal");modal.classList.remove("hidden");leadForm.classList.remove("hidden");leadDetail.classList.add("hidden");
-  leadSource.innerHTML=SOURCES.map(x=>`<option>${x}</option>`).join("");leadConsultant.innerHTML=CONSULTANTS.map(x=>`<option>${x}</option>`).join("");leadStatus.innerHTML=STATUSES.map(x=>`<option>${x}</option>`).join("");
+  leadSource.innerHTML=SOURCES.map(x=>`<option>${esc(x)}</option>`).join("");leadConsultant.innerHTML=CONSULTANTS.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.innerHTML=STATUSES.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.disabled=true;
   const l=id?leads.find(x=>x.id===id):null;
   modalTitle.textContent=l?l.name:"Nova lead";leadId.value=l?.id||"";leadName.value=l?.name||"";leadPhone.value=l?.phone||"";leadEmail.value=l?.email||"";leadSource.value=l?.source||"Instagram";
-  leadDestinations.value=(l?.destinations||[]).join(", ");leadEnteredAt.value=l?.enteredAt?.slice(0,16)||nowLocalInput();leadConsultant.value=l?.consultant||CONSULTANTS[0];leadFollowUp.value=l?.followUpAt?.slice(0,16)||"";leadStatus.value=l?.status||"Nova";leadNote.value="";
-  if(l&&detail)renderLeadDetail(l);
+  leadDestinations.value=(l?.destinations||[]).join(", ");leadEnteredAt.value=toLocalInput(l?.enteredAt)||nowLocalInput();leadConsultant.value=l?.consultant||CONSULTANTS[0];leadFollowUp.value=toLocalInput(l?.followUpAt);leadStatus.value=l?.status||"Nova";leadNote.value="";
+  if(l&&detail)renderLeadDetail(l);else setTimeout(()=>leadName.focus(),0);
 }
 function renderLeadDetail(l){
   leadForm.classList.add("hidden");leadDetail.classList.remove("hidden");
-  const events=[...(l.events||[])];if(l.enteredAt)events.push({at:l.enteredAt,text:"Lead criada"});if(l.contactedAt)events.push({at:l.contactedAt,text:"Primeiro contacto efetuado"});if(l.quotedAt)events.push({at:l.quotedAt,text:"Orçamento enviado"});if(l.closedAt)events.push({at:l.closedAt,text:"Lead fechada"});if(l.lostAt)events.push({at:l.lostAt,text:"Lead perdida"});
-  events.sort((a,b)=>new Date(b.at)-new Date(a.at));
-  leadDetail.innerHTML=`<div class="notice"><strong>${l.status}</strong> · ${l.source} · ${(l.destinations||[]).join(", ")} · ${l.consultant}</div>
-  <div class="actions" style="margin-bottom:18px"><button class="btn" onclick="openLeadModal('${l.id}',false)">Editar</button>${!l.contactedAt?`<button class="btn" onclick="markContact('${l.id}')">Primeiro contacto</button>`:""}${l.contactedAt&&!l.quotedAt?`<button class="btn" onclick="markQuoted('${l.id}')">Orçamento enviado</button>`:""}<button class="btn" onclick="addNote('${l.id}')">Adicionar nota</button></div>
-  <h3>Histórico</h3><div class="timeline">${events.map(e=>`<div class="event"><small>${fmt(e.at)}</small><p>${e.text}</p></div>`).join("")||'<div class="empty">Sem eventos</div>'}</div>`;
+  let events=[...(l.events||[])];
+  if(!events.length){if(l.enteredAt)events.push({at:l.enteredAt,text:"Lead criada"});if(l.contactedAt)events.push({at:l.contactedAt,text:"Primeiro contacto efetuado"});if(l.quotedAt)events.push({at:l.quotedAt,text:"Orçamento enviado"});if(l.closedAt)events.push({at:l.closedAt,text:"Lead fechada"});if(l.lostAt)events.push({at:l.lostAt,text:"Lead perdida"})}
+  events.sort((a,b)=>new Date(b.at)-new Date(a.at));const safeId=escAttr(l.id);
+  leadDetail.innerHTML=`<div class="notice"><strong>${esc(l.status)}</strong> · ${esc(l.source)} · ${esc((l.destinations||[]).join(", "))} · ${esc(l.consultant)}</div>
+  <div class="actions" style="margin-bottom:18px"><button class="btn" onclick="openLeadModal('${safeId}',false)">Editar</button>${!l.contactedAt?`<button class="btn" onclick="markContact('${safeId}')">Primeiro contacto</button>`:""}${l.contactedAt&&!l.quotedAt?`<button class="btn" onclick="markQuoted('${safeId}')">Orçamento enviado</button>`:""}<button class="btn" onclick="addNote('${safeId}')">Adicionar nota</button></div>
+  <h3>Histórico</h3><div class="timeline">${events.map(e=>`<div class="event"><small>${fmt(e.at)}</small><p>${esc(e.text)}</p></div>`).join("")||'<div class="empty">Sem eventos</div>'}</div>`;
+  setTimeout(()=>leadDetail.querySelector("button")?.focus(),0);
 }
 function closeModal(){leadModal.classList.add("hidden")}
+function closeLossModal(){lossModal.classList.add("hidden");lossLeadId.value=""}
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(!lossModal.classList.contains("hidden"))closeLossModal();else if(!leadModal.classList.contains("hidden"))closeModal()});
+leadModal.addEventListener("click",e=>{if(e.target===leadModal)closeModal()});lossModal.addEventListener("click",e=>{if(e.target===lossModal)closeLossModal()});
 leadForm.onsubmit=e=>{
-  e.preventDefault();const id=leadId.value;let l=id?leads.find(x=>x.id===id):null;const phone=normalizedPhone(leadPhone.value);
-  if(!l){l={id:"L"+Date.now(),clientId:"C"+Date.now(),events:[],notes:[],createdAt:new Date().toISOString(),contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:""};leads.push(l);logEvent(l,"create","Lead registada no CRM")}
-  const existing=leads.find(x=>x.id!==l.id&&normalizedPhone(x.phone)===phone);if(existing)l.clientId=existing.clientId;
-  Object.assign(l,{name:leadName.value.trim(),phone,email:leadEmail.value.trim(),source:leadSource.value,destinations:leadDestinations.value.split(",").map(x=>x.trim()).filter(Boolean),enteredAt:new Date(leadEnteredAt.value).toISOString(),consultant:leadConsultant.value,followUpAt:leadFollowUp.value?new Date(leadFollowUp.value).toISOString():null,status:leadStatus.value});
+  e.preventDefault();const id=leadId.value;let l=id?leads.find(x=>x.id===id):null;const phone=normalizedPhone(leadPhone.value);const isNew=!l;const oldConsultant=l?.consultant;
+  if(!l){l={id:"L"+Date.now(),clientId:"C"+Date.now(),events:[],notes:[],createdAt:new Date().toISOString(),contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:"",status:"Nova"};leads.push(l);logEvent(l,"create","Lead registada no CRM")}
+  const existing=leads.find(x=>x.id!==l.id&&phone&&normalizedPhone(x.phone)===phone);if(existing)l.clientId=existing.clientId;
+  Object.assign(l,{name:leadName.value.trim(),phone,email:leadEmail.value.trim(),source:leadSource.value,destinations:[...new Set(leadDestinations.value.split(",").map(x=>x.trim()).filter(Boolean))],enteredAt:new Date(leadEnteredAt.value).toISOString(),consultant:leadConsultant.value,followUpAt:leadFollowUp.value?new Date(leadFollowUp.value).toISOString():null,status:isNew?"Nova":l.status});
+  if(!isNew&&oldConsultant!==l.consultant)logEvent(l,"consultant",`Consultor alterado de ${oldConsultant} para ${l.consultant}`);
   if(leadNote.value.trim()){l.notes.push({at:new Date().toISOString(),text:leadNote.value.trim()});logEvent(l,"note",leadNote.value.trim())}
   save();closeModal();renderAll();
 }
 function markContact(id){const l=leads.find(x=>x.id===id);if(!l||l.contactedAt)return;l.contactedAt=new Date().toISOString();l.status="Contactada";logEvent(l,"contact","Primeiro contacto efetuado por "+l.consultant);save();closeModal();renderAll()}
 function markQuoted(id){const l=leads.find(x=>x.id===id);if(!l||l.quotedAt)return;l.quotedAt=new Date().toISOString();l.status="Orçamento enviado";logEvent(l,"quote","Orçamento enviado");save();closeModal();renderAll()}
-function markClosed(id){const l=leads.find(x=>x.id===id);if(!l)return;l.status="Fechada";l.closedAt=new Date().toISOString();logEvent(l,"closed","Lead fechada");save();renderAll()}
-function markLost(id){const l=leads.find(x=>x.id===id);if(!l)return;const r=prompt("Motivo de perda:\n"+LOSS_REASONS.join(" | "),"Preço elevado");if(!r)return;l.status="Perdida";l.lossReason=r;l.lostAt=new Date().toISOString();logEvent(l,"lost","Lead perdida: "+r);save();renderAll()}
+function markClosed(id){const l=leads.find(x=>x.id===id);if(!l||l.status==="Fechada")return;if(!confirm(`Confirmar o fecho da lead de ${l.name}?`))return;l.status="Fechada";l.closedAt=new Date().toISOString();l.followUpAt=null;logEvent(l,"closed","Lead fechada");save();closeModal();renderAll()}
+function markLost(id){const l=leads.find(x=>x.id===id);if(!l||l.status==="Perdida")return;lossLeadId.value=id;lossReasonSelect.innerHTML='<option value="">Selecionar motivo</option>'+LOSS_REASONS.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");lossModal.classList.remove("hidden");setTimeout(()=>lossReasonSelect.focus(),0)}
+function confirmLost(){const l=leads.find(x=>x.id===lossLeadId.value);const r=lossReasonSelect.value;if(!l||!LOSS_REASONS.includes(r)){alert("Selecione um motivo de perda válido.");return}l.status="Perdida";l.lossReason=r;l.lostAt=new Date().toISOString();l.followUpAt=null;logEvent(l,"lost","Lead perdida: "+r);save();closeLossModal();closeModal();renderAll()}
 function addNote(id){const l=leads.find(x=>x.id===id);const n=prompt("Nota");if(!n)return;l.notes.push({at:new Date().toISOString(),text:n});logEvent(l,"note",n);save();renderLeadDetail(l)}
-function exportData(){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),leads,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="travel-leads-backup.json";a.click();URL.revokeObjectURL(a.href)}
-importFile.onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!Array.isArray(data.leads))throw new Error();leads=data.leads;settings=data.settings||settings;save();localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Dados importados.")}catch{alert("Ficheiro inválido.")}}
+function downloadBackup(filename="travel-leads-backup.json"){const blob=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),leads,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0)}
+function exportData(){downloadBackup()}
+importFile.onchange=async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.leads))throw new Error("Estrutura inválida");if(!confirm(`A importação vai substituir ${leads.length} lead(s) por ${data.leads.length}. Continuar?`))return;downloadBackup(`travel-leads-backup-antes-importacao-${new Date().toISOString().slice(0,10)}.json`);leads=data.leads;settings=data.settings||settings;save();localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Dados importados com sucesso.")}catch(err){alert("Ficheiro inválido. Os dados atuais não foram alterados.")}}
 function saveSettings(){settings.slaLimit=Math.max(1,Number(slaLimit.value)||60);localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll()}
-function resetData(){if(confirm("Repor os dados importados do Excel?")){leads=structuredClone(SEED);save();renderAll()}}
+function cloneData(v){return typeof structuredClone==="function"?structuredClone(v):JSON.parse(JSON.stringify(v))}
+function resetData(){if(confirm("Repor os dados importados do Excel? Será criada uma cópia de segurança.")){downloadBackup(`travel-leads-backup-antes-reposicao-${new Date().toISOString().slice(0,10)}.json`);leads=cloneData(SEED);save();renderAll()}}
 ["fSearch","fStatus","fSource","fConsultant","fDestination","fLoss","fSla"].forEach(id=>document.getElementById(id).addEventListener("input",renderLeads));
 dashPeriod.onchange=renderDashboard;
 setInterval(()=>{if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads()},60000);

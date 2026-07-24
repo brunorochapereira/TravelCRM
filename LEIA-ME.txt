@@ -1,0 +1,14 @@
+TRAVEL LEAD MANAGER — RC2
+
+Correções implementadas:
+- Proteção XSS em dados apresentados
+- Correção de datas/fuso horário na edição
+- Pesquisa por nome e telefone
+- Histórico sem eventos duplicados
+- Importação com confirmação e backup automático
+- Motivo de perda validado em modal
+- Escape e gestão inicial de foco nos modais
+- Confirmação de fecho e estado não editável diretamente
+- Compatibilidade sem structuredClone
+
+Abra index.html num browser moderno.
