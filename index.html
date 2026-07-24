@@ -111,9 +111,8 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
           <button class="btn primary" onclick="saveSettings()">Guardar</button>
         </div>
         <div class="card"><h3>Destinos disponíveis</h3>
-          <div class="field"><label>Um destino por linha</label><textarea id="destinationSettings" rows="12" placeholder="Algarve&#10;Maldivas&#10;Zanzibar"></textarea></div>
-          <p style="color:var(--muted)">Esta lista é utilizada na criação e edição das leads. Os destinos já usados são preservados automaticamente.</p>
-          <button class="btn primary" onclick="saveDestinations()">Guardar destinos</button>
+          <p style="color:var(--muted)">A lista de destinos é fixa para manter os relatórios consistentes. Ao selecionar <strong>Outros</strong>, o colaborador pode escrever manualmente um destino não incluído na lista.</p>
+          <div id="fixedDestinationList" class="quick"></div>
         </div>
         <div class="card"><h3>Dados</h3><p style="color:var(--muted)">Os dados ficam neste browser. Exporte regularmente uma cópia JSON.</p><button class="btn danger" onclick="resetData()">Repor dados iniciais</button></div>
       </div>
@@ -131,7 +130,8 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
         <div class="field"><label>Telefone *</label><input id="leadPhone" required></div>
         <div class="field"><label>Email</label><input id="leadEmail" type="email"></div>
         <div class="field"><label>Canal *</label><select id="leadSource" required></select></div>
-        <div class="field full"><label>Destinos *</label><select id="leadDestinations" multiple required size="7" aria-describedby="destinationHelp"></select><small id="destinationHelp" style="display:block;color:var(--muted);margin-top:6px">Pode selecionar vários destinos. No computador, use Ctrl/Cmd para selecionar mais do que um.</small></div>
+        <div class="field full"><label>Destinos *</label><select id="leadDestinations" multiple required size="9" aria-describedby="destinationHelp"></select><small id="destinationHelp" style="display:block;color:var(--muted);margin-top:6px">Pode selecionar vários destinos. No computador, use Ctrl/Cmd para selecionar mais do que um.</small></div>
+        <div id="otherDestinationField" class="field full hidden"><label>Outro destino *</label><input id="leadOtherDestination" placeholder="Escreva o destino. Para vários, separe por vírgulas."><small style="display:block;color:var(--muted);margin-top:6px">O texto introduzido será guardado como destino; a opção “Outros” não será guardada.</small></div>
         <div class="field"><label>Data e hora de entrada *</label><input id="leadEnteredAt" type="datetime-local" required></div>
         <div class="field"><label>Consultor *</label><select id="leadConsultant" required></select></div>
         <div class="field"><label>Follow-up</label><input id="leadFollowUp" type="datetime-local"></div>
@@ -160,7 +160,7 @@ const STATUSES = ["Nova","Contactada","Orçamento enviado","Fechada","Perdida"];
 const MAIN_STAGES = ["Nova","Contactada","Orçamento enviado","Fechada"];
 const LOSS_REASONS = ["Preço elevado","Escolheu outra agência","Não respondeu","Datas indisponíveis","Destino indisponível","Outro"];
 const CONSULTANTS = ["Consultor 1","Consultor 2","Consultor 3"];
-const DEFAULT_DESTINATIONS = ["Algarve","Cabo Verde","Caraíbas","Cruzeiro","Disney","Dubai","Ilhas Espanholas","Madeira","Maldivas","Nova Iorque","Paris","Punta Cana","Tailândia","Tunísia","Zanzibar","Sem destino"];
+const DEFAULT_DESTINATIONS = ["Caraibas","Europa","Disney","Tunisia","Marrocos","Cabo Verde","Ilhas Espanholas","Algarve","Africa","Asia","Maldivas","Japão","EUA","Brasil","Cruzeiro","Sem Destino","Outros"];
 let leads = JSON.parse(localStorage.getItem("tlm_leads") || "null") || (typeof structuredClone==="function"?structuredClone(SEED):JSON.parse(JSON.stringify(SEED)));
 let settings = JSON.parse(localStorage.getItem("tlm_settings") || '{"slaLimit":60}');
 let currentView="dashboard";
@@ -183,11 +183,24 @@ function statusClass(s){return s==="Nova"?"new":s==="Contactada"?"contacted":s==
 function logEvent(lead,type,text){lead.events ||= [];lead.events.unshift({at:new Date().toISOString(),type,text});}
 function normalizedPhone(v){return (v||"").replace(/\D/g,"").replace(/^351/,"")}
 function normalizeDestinations(values){return [...new Set((values||[]).map(v=>String(v||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt"))}
-settings.destinations=normalizeDestinations(settings.destinations||[...DEFAULT_DESTINATIONS,...leads.flatMap(l=>l.destinations||[])]);
+settings.destinations=[...DEFAULT_DESTINATIONS];
 leads.forEach(l=>{if(!Array.isArray(l.statusHistory))l.statusHistory=[]});
 localStorage.setItem("tlm_settings",JSON.stringify(settings));
 function selectedValues(select){return [...select.selectedOptions].map(o=>o.value)}
-function populateDestinationSelect(selected=[]){const available=normalizeDestinations([...settings.destinations,...selected]);leadDestinations.innerHTML=available.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");[...leadDestinations.options].forEach(o=>o.selected=selected.includes(o.value))}
+function populateDestinationSelect(selected=[]){
+  const fixed=DEFAULT_DESTINATIONS.filter(x=>x!=="Outros");
+  const custom=normalizeDestinations(selected.filter(x=>!fixed.includes(x)));
+  leadDestinations.innerHTML=DEFAULT_DESTINATIONS.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
+  [...leadDestinations.options].forEach(o=>o.selected=selected.includes(o.value)||(o.value==="Outros"&&custom.length>0));
+  leadOtherDestination.value=custom.join(", ");
+  toggleOtherDestination();
+}
+function toggleOtherDestination(){
+  const active=selectedValues(leadDestinations).includes("Outros");
+  otherDestinationField.classList.toggle("hidden",!active);
+  leadOtherDestination.required=active;
+  if(!active)leadOtherDestination.value="";
+}
 function statusSnapshot(l){return {status:l.status,contactedAt:l.contactedAt||null,quotedAt:l.quotedAt||null,closedAt:l.closedAt||null,lostAt:l.lostAt||null,lossReason:l.lossReason||"",followUpAt:l.followUpAt||null}}
 function pushStatusSnapshot(l){l.statusHistory ||= [];l.statusHistory.push(statusSnapshot(l));if(l.statusHistory.length>30)l.statusHistory.shift()}
 function applyStatus(l,newStatus,{reason=""}={}){const oldStatus=l.status;if(oldStatus===newStatus)return;pushStatusSnapshot(l);const now=new Date().toISOString();l.status=newStatus;if(newStatus==="Nova"){l.contactedAt=null;l.quotedAt=null;l.closedAt=null;l.lostAt=null;l.lossReason=""}if(newStatus==="Contactada"){l.contactedAt ||= now;l.quotedAt=null;l.closedAt=null;l.lostAt=null;l.lossReason=""}if(newStatus==="Orçamento enviado"){l.contactedAt ||= now;l.quotedAt ||= now;l.closedAt=null;l.lostAt=null;l.lossReason=""}if(newStatus==="Fechada"){l.contactedAt ||= now;l.quotedAt ||= now;l.closedAt=now;l.lostAt=null;l.lossReason="";l.followUpAt=null}if(newStatus==="Perdida"){l.lostAt=now;l.closedAt=null;l.lossReason=reason;l.followUpAt=null}logEvent(l,"status",`Etapa alterada de ${oldStatus} para ${newStatus}${reason?`: ${reason}`:""}`)}
@@ -298,7 +311,7 @@ function renderClients(){
     return `<div class="card client-card"><h4>${esc(c.name)}</h4><p>${esc(c.phone||"Sem telefone")}</p><p>${c.leads.length} lead(s), ${closed} fechada(s)</p><p>Destinos: ${esc([...new Set(c.leads.flatMap(l=>l.destinations))].join(", "))}</p></div>`;
   }).join("");
 }
-function renderAll(){if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads();if(currentView==="clients")renderClients();document.getElementById("slaLimit").value=settings.slaLimit;const ds=document.getElementById("destinationSettings");if(ds)ds.value=settings.destinations.join("\n")}
+function renderAll(){if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads();if(currentView==="clients")renderClients();document.getElementById("slaLimit").value=settings.slaLimit;const list=document.getElementById("fixedDestinationList");if(list)list.innerHTML=DEFAULT_DESTINATIONS.map(x=>`<span class="badge">${esc(x)}</span>`).join("")}
 function openLeadModal(id=null,detail=false){
   const modal=document.getElementById("leadModal");modal.classList.remove("hidden");leadForm.classList.remove("hidden");leadDetail.classList.add("hidden");
   leadSource.innerHTML=SOURCES.map(x=>`<option>${esc(x)}</option>`).join("");leadConsultant.innerHTML=CONSULTANTS.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.innerHTML=STATUSES.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.disabled=true;
@@ -325,7 +338,12 @@ leadForm.onsubmit=e=>{
   e.preventDefault();const id=leadId.value;let l=id?leads.find(x=>x.id===id):null;const phone=normalizedPhone(leadPhone.value);const isNew=!l;const oldConsultant=l?.consultant;
   if(!l){l={id:"L"+Date.now(),clientId:"C"+Date.now(),events:[],notes:[],createdAt:new Date().toISOString(),contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:"",status:"Nova"};leads.push(l);logEvent(l,"create","Lead registada no CRM")}
   const existing=leads.find(x=>x.id!==l.id&&phone&&normalizedPhone(x.phone)===phone);if(existing)l.clientId=existing.clientId;
-  const chosenDestinations=selectedValues(leadDestinations);if(!chosenDestinations.length){alert("Selecione pelo menos um destino.");leadDestinations.focus();return}
+  let chosenDestinations=selectedValues(leadDestinations);if(!chosenDestinations.length){alert("Selecione pelo menos um destino.");leadDestinations.focus();return}
+  if(chosenDestinations.includes("Outros")){
+    const manual=normalizeDestinations(leadOtherDestination.value.split(","));
+    if(!manual.length){alert("Escreva o destino na opção Outros.");leadOtherDestination.focus();return}
+    chosenDestinations=normalizeDestinations([...chosenDestinations.filter(x=>x!=="Outros"),...manual]);
+  }
   Object.assign(l,{name:leadName.value.trim(),phone,email:leadEmail.value.trim(),source:leadSource.value,destinations:chosenDestinations,enteredAt:new Date(leadEnteredAt.value).toISOString(),consultant:leadConsultant.value,followUpAt:leadFollowUp.value?new Date(leadFollowUp.value).toISOString():null,status:isNew?"Nova":l.status});
   if(!isNew&&oldConsultant!==l.consultant)logEvent(l,"consultant",`Consultor alterado de ${oldConsultant} para ${l.consultant}`);
   if(leadNote.value.trim()){l.notes.push({at:new Date().toISOString(),text:leadNote.value.trim()});logEvent(l,"note",leadNote.value.trim())}
@@ -337,14 +355,15 @@ function markClosed(id){const l=leads.find(x=>x.id===id);if(!l||l.status==="Fech
 function markLost(id){const l=leads.find(x=>x.id===id);if(!l||l.status==="Perdida")return;lossLeadId.value=id;lossReasonSelect.innerHTML='<option value="">Selecionar motivo</option>'+LOSS_REASONS.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");lossModal.classList.remove("hidden");setTimeout(()=>lossReasonSelect.focus(),0)}
 function confirmLost(){const l=leads.find(x=>x.id===lossLeadId.value);const r=lossReasonSelect.value;if(!l||!LOSS_REASONS.includes(r)){alert("Selecione um motivo de perda válido.");return}applyStatus(l,"Perdida",{reason:r});save();closeLossModal();closeModal();renderAll()}
 function addNote(id){const l=leads.find(x=>x.id===id);const n=prompt("Nota");if(!n)return;l.notes.push({at:new Date().toISOString(),text:n});logEvent(l,"note",n);save();renderLeadDetail(l)}
-function downloadBackup(filename="travel-leads-backup.json"){const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),leads,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0)}
+function downloadBackup(filename="travel-leads-backup.json"){const blob=new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),leads,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),0)}
 function exportData(){downloadBackup()}
-importFile.onchange=async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.leads))throw new Error("Estrutura inválida");if(!confirm(`A importação vai substituir ${leads.length} lead(s) por ${data.leads.length}. Continuar?`))return;downloadBackup(`travel-leads-backup-antes-importacao-${new Date().toISOString().slice(0,10)}.json`);leads=data.leads.map(l=>({...l,statusHistory:Array.isArray(l.statusHistory)?l.statusHistory:[]}));settings=data.settings||settings;settings.destinations=normalizeDestinations([...(settings.destinations||DEFAULT_DESTINATIONS),...leads.flatMap(l=>l.destinations||[])]);save();localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Dados importados com sucesso.")}catch(err){alert("Ficheiro inválido. Os dados atuais não foram alterados.")}}
+importFile.onchange=async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.leads))throw new Error("Estrutura inválida");if(!confirm(`A importação vai substituir ${leads.length} lead(s) por ${data.leads.length}. Continuar?`))return;downloadBackup(`travel-leads-backup-antes-importacao-${new Date().toISOString().slice(0,10)}.json`);leads=data.leads.map(l=>({...l,statusHistory:Array.isArray(l.statusHistory)?l.statusHistory:[]}));settings=data.settings||settings;settings.destinations=[...DEFAULT_DESTINATIONS];save();localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Dados importados com sucesso.")}catch(err){alert("Ficheiro inválido. Os dados atuais não foram alterados.")}}
 function saveSettings(){settings.slaLimit=Math.max(1,Number(slaLimit.value)||60);localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll()}
-function saveDestinations(){const requested=normalizeDestinations(destinationSettings.value.split(/\r?\n/));const used=normalizeDestinations(leads.flatMap(l=>l.destinations||[]));settings.destinations=normalizeDestinations([...requested,...used]);localStorage.setItem("tlm_settings",JSON.stringify(settings));renderAll();alert("Lista de destinos atualizada.")}
+function saveDestinations(){}
 function cloneData(v){return typeof structuredClone==="function"?structuredClone(v):JSON.parse(JSON.stringify(v))}
 function resetData(){if(confirm("Repor os dados importados do Excel? Será criada uma cópia de segurança.")){downloadBackup(`travel-leads-backup-antes-reposicao-${new Date().toISOString().slice(0,10)}.json`);leads=cloneData(SEED);save();renderAll()}}
 ["fSearch","fStatus","fSource","fConsultant","fDestination","fLoss","fSla"].forEach(id=>document.getElementById(id).addEventListener("input",renderLeads));
+leadDestinations.addEventListener("change",toggleOtherDestination);
 dashPeriod.onchange=renderDashboard;
 setInterval(()=>{if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads()},60000);
 renderAll();
