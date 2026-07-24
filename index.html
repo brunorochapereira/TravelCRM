@@ -38,7 +38,7 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
 .badge.new{background:#e8f0ff;color:#155eef}.badge.contacted{background:#e9f8ef;color:#137a46}.badge.quoted{background:#fff4df;color:#9a5b00}
 .badge.closed{background:#e8f7ec;color:#157347}.badge.lost{background:#fdecec;color:#b42318}
 .timer{font-weight:800}.timer.green{color:var(--green)}.timer.yellow{color:var(--yellow)}.timer.orange{color:var(--orange)}.timer.red{color:var(--red)}
-.filters{display:grid;grid-template-columns:2fr repeat(6,1fr);gap:8px;margin-bottom:12px}.filters input,.filters select,.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #d0d5dd;border-radius:9px;background:#fff}.field select[multiple]{min-height:170px;padding:6px}.stage-controls{display:inline-flex;align-items:center;gap:5px}.stage-arrow{min-width:34px;font-size:16px}
+.filters{display:grid;grid-template-columns:2fr repeat(6,1fr);gap:8px;margin-bottom:12px}.filters input,.filters select,.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #d0d5dd;border-radius:9px;background:#fff}.field select[multiple]{min-height:170px;padding:6px}.stage-controls{display:inline-flex;align-items:center;gap:5px}.stage-action{white-space:nowrap}.phone-line{display:flex;align-items:center;gap:7px;margin-top:4px}.phone-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line);border-radius:8px;color:var(--primary);background:#fff;text-decoration:none}.phone-link:hover{background:#eef4ff;border-color:#c8d8ff}.phone-link svg{width:15px;height:15px}.archived-row td{opacity:.68;background:#fafafa}.quick{align-items:center}
 .hidden{display:none!important}.empty{padding:30px;text-align:center;color:var(--muted)}
 .modal{position:fixed;inset:0;background:rgba(16,24,40,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
 .modal-box{width:min(820px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
@@ -48,8 +48,28 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
 .event small{color:var(--muted)}.event p{margin:4px 0}.quick{display:flex;gap:6px;flex-wrap:wrap}
 .client-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.client-card h4{margin:0 0 6px}.client-card p{margin:4px 0;color:var(--muted);font-size:13px}
 .notice{padding:12px 14px;background:#eef4ff;border:1px solid #d6e4ff;border-radius:10px;margin-bottom:14px;color:#244ea5}
+
+.multi-combo{position:relative}
+.multi-combo-btn{width:100%;min-height:46px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;padding:10px 42px 10px 12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.multi-combo-btn:focus{outline:2px solid rgba(21,94,239,.2);border-color:var(--primary)}
+.multi-combo-arrow{color:var(--muted);font-size:14px;flex:0 0 auto}
+.multi-combo-summary{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.multi-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:#eef2f6;color:#344054;font-size:12px;font-weight:700;max-width:100%}
+.multi-chip.more{background:#e8f0ff;color:#155eef}
+.multi-placeholder{color:var(--muted)}
+.multi-combo-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:30;padding:8px}
+.multi-combo-tools{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:2px 2px 8px;position:sticky;top:0;background:#fff;z-index:2}
+.multi-combo-search{width:100%;padding:8px 10px;border:1px solid #d0d5dd;border-radius:8px}
+.multi-combo-toolbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.multi-combo-options{max-height:240px;overflow:auto}
+.multi-combo-empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}
+.multi-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.multi-option:hover{background:#f8fafc}
+.multi-option input{width:16px;height:16px;cursor:pointer}
+.multi-option span{font-size:14px}
+
 @media(max-width:1200px){.kpis{grid-template-columns:repeat(3,1fr)}.filters{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:800px){.app{display:block}.sidebar{height:auto;position:static;padding:14px}.brand{margin-bottom:10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.main{padding:16px}.topbar{align-items:flex-start}.kpis{grid-template-columns:repeat(2,1fr)}.sla-strip{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.client-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.multi-combo-tools{grid-template-columns:1fr 1fr}.multi-combo-search{grid-column:1/-1}.app{display:block}.sidebar{height:auto;position:static;padding:14px}.brand{margin-bottom:10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;width:auto}.main{padding:16px}.topbar{align-items:flex-start}.kpis{grid-template-columns:repeat(2,1fr)}.sla-strip{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.client-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -130,7 +150,24 @@ th{background:#f8fafc;color:#475467;font-size:12px;position:sticky;top:0;z-index
         <div class="field"><label>Telefone *</label><input id="leadPhone" required></div>
         <div class="field"><label>Email</label><input id="leadEmail" type="email"></div>
         <div class="field"><label>Canal *</label><select id="leadSource" required></select></div>
-        <div class="field full"><label>Destinos *</label><select id="leadDestinations" multiple required size="9" aria-describedby="destinationHelp"></select><small id="destinationHelp" style="display:block;color:var(--muted);margin-top:6px">Pode selecionar vários destinos. No computador, use Ctrl/Cmd para selecionar mais do que um.</small></div>
+        <div class="field full"><label>Destinos *</label>
+          <div class="multi-combo" id="destinationCombo">
+            <button type="button" id="leadDestinationsButton" class="multi-combo-btn" aria-haspopup="listbox" aria-expanded="false">
+              <span id="leadDestinationsSummary">Selecionar destinos</span>
+              <span class="multi-combo-arrow">▾</span>
+            </button>
+            <div id="leadDestinationsDropdown" class="multi-combo-dropdown hidden" role="listbox" aria-multiselectable="true">
+              <div class="multi-combo-tools">
+                <input id="destinationSearch" class="multi-combo-search" type="search" placeholder="Pesquisar destino" aria-label="Pesquisar destinos">
+                <button id="selectAllDestinations" class="multi-combo-toolbtn" type="button">Selecionar todos</button>
+                <button id="clearDestinations" class="multi-combo-toolbtn" type="button">Limpar</button>
+              </div>
+              <div id="destinationOptions" class="multi-combo-options"></div>
+            </div>
+            <select id="leadDestinations" multiple class="hidden" aria-hidden="true" tabindex="-1"></select>
+          </div>
+          <small id="destinationHelp" style="display:block;color:var(--muted);margin-top:6px">Selecione um ou vários destinos na caixa de seleção múltipla.</small>
+        </div>
         <div id="otherDestinationField" class="field full hidden"><label>Outro destino *</label><input id="leadOtherDestination" placeholder="Escreva o destino. Para vários, separe por vírgulas."><small style="display:block;color:var(--muted);margin-top:6px">O texto introduzido será guardado como destino; a opção “Outros” não será guardada.</small></div>
         <div class="field"><label>Data e hora de entrada *</label><input id="leadEnteredAt" type="datetime-local" required></div>
         <div class="field"><label>Consultor *</label><select id="leadConsultant" required></select></div>
@@ -184,22 +221,74 @@ function logEvent(lead,type,text){lead.events ||= [];lead.events.unshift({at:new
 function normalizedPhone(v){return (v||"").replace(/\D/g,"").replace(/^351/,"")}
 function normalizeDestinations(values){return [...new Set((values||[]).map(v=>String(v||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt"))}
 settings.destinations=[...DEFAULT_DESTINATIONS];
-leads.forEach(l=>{if(!Array.isArray(l.statusHistory))l.statusHistory=[]});
+leads.forEach(l=>{if(!Array.isArray(l.statusHistory))l.statusHistory=[];if(l.archivedAt===undefined)l.archivedAt=null});
 localStorage.setItem("tlm_settings",JSON.stringify(settings));
 function selectedValues(select){return [...select.selectedOptions].map(o=>o.value)}
+function selectedDestinationValues(){return selectedValues(leadDestinations)}
+function setDestinationSelection(values){
+  const selected=new Set(values||[])
+  ;[...leadDestinations.options].forEach(o=>o.selected=selected.has(o.value))
+  ;[...destinationOptions.querySelectorAll('input[type="checkbox"]')].forEach(chk=>chk.checked=selected.has(chk.value))
+  updateDestinationSummary()
+  toggleOtherDestination()
+}
+function updateDestinationSummary(){
+  const selected=selectedDestinationValues().filter(v=>v!=="Outros")
+  if(!selected.length){
+    leadDestinationsSummary.innerHTML='<span class="multi-placeholder">Selecionar destinos</span>'
+    return
+  }
+  const chips=selected.slice(0,3).map(v=>`<span class="multi-chip">${esc(v)}</span>`).join('')
+  const more=selected.length>3?`<span class="multi-chip more">+${selected.length-3}</span>`:''
+  leadDestinationsSummary.innerHTML=`<span class="multi-combo-summary">${chips}${more}</span>`
+}
+function syncDestinationFromCheckboxes(){
+  const vals=[...destinationOptions.querySelectorAll('input[type="checkbox"]:checked')].map(i=>i.value)
+  ;[...leadDestinations.options].forEach(o=>o.selected=vals.includes(o.value))
+  updateDestinationSummary()
+  toggleOtherDestination()
+}
+function filterDestinationOptions(){
+  const q=destinationSearch.value.trim().toLocaleLowerCase('pt-PT')
+  let visible=0
+  ;[...destinationOptions.querySelectorAll('.multi-option')].forEach(option=>{
+    const match=!q||option.dataset.label.includes(q)
+    option.classList.toggle('hidden',!match)
+    if(match)visible++
+  })
+  let empty=destinationOptions.querySelector('.multi-combo-empty')
+  if(!visible){
+    if(!empty){empty=document.createElement('div');empty.className='multi-combo-empty';empty.textContent='Nenhum destino encontrado';destinationOptions.appendChild(empty)}
+  }else empty?.remove()
+}
+function selectAllVisibleDestinations(){
+  ;[...destinationOptions.querySelectorAll('.multi-option:not(.hidden) input[type="checkbox"]')].forEach(chk=>chk.checked=true)
+  syncDestinationFromCheckboxes()
+}
+function clearDestinationSelection(){
+  ;[...destinationOptions.querySelectorAll('input[type="checkbox"]')].forEach(chk=>chk.checked=false)
+  destinationSearch.value=''
+  filterDestinationOptions()
+  syncDestinationFromCheckboxes()
+}
 function populateDestinationSelect(selected=[]){
-  const fixed=DEFAULT_DESTINATIONS.filter(x=>x!=="Outros");
-  const custom=normalizeDestinations(selected.filter(x=>!fixed.includes(x)));
-  leadDestinations.innerHTML=DEFAULT_DESTINATIONS.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
-  [...leadDestinations.options].forEach(o=>o.selected=selected.includes(o.value)||(o.value==="Outros"&&custom.length>0));
-  leadOtherDestination.value=custom.join(", ");
-  toggleOtherDestination();
+  const fixed=DEFAULT_DESTINATIONS.filter(x=>x!=="Outros")
+  const custom=normalizeDestinations(selected.filter(x=>!fixed.includes(x)))
+  leadDestinations.innerHTML=DEFAULT_DESTINATIONS.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("")
+  destinationSearch.value=''
+  destinationOptions.innerHTML=DEFAULT_DESTINATIONS.map(x=>`<label class="multi-option" data-label="${escAttr(x.toLowerCase())}"><input type="checkbox" value="${escAttr(x)}"><span>${esc(x)}</span></label>`).join('')
+  ;[...destinationOptions.querySelectorAll('input[type="checkbox"]')].forEach(chk=>chk.addEventListener('change',syncDestinationFromCheckboxes))
+  const initial=normalizeDestinations([...selected.filter(x=>fixed.includes(x)), ...(custom.length?["Outros"]:[])])
+  setDestinationSelection(initial)
+  leadOtherDestination.value=custom.join(', ')
+  toggleOtherDestination()
+  filterDestinationOptions()
 }
 function toggleOtherDestination(){
-  const active=selectedValues(leadDestinations).includes("Outros");
-  otherDestinationField.classList.toggle("hidden",!active);
-  leadOtherDestination.required=active;
-  if(!active)leadOtherDestination.value="";
+  const active=selectedDestinationValues().includes("Outros")
+  otherDestinationField.classList.toggle("hidden",!active)
+  leadOtherDestination.required=active
+  if(!active)leadOtherDestination.value=""
 }
 function statusSnapshot(l){return {status:l.status,contactedAt:l.contactedAt||null,quotedAt:l.quotedAt||null,closedAt:l.closedAt||null,lostAt:l.lostAt||null,lossReason:l.lossReason||"",followUpAt:l.followUpAt||null}}
 function pushStatusSnapshot(l){l.statusHistory ||= [];l.statusHistory.push(statusSnapshot(l));if(l.statusHistory.length>30)l.statusHistory.shift()}
@@ -207,6 +296,27 @@ function applyStatus(l,newStatus,{reason=""}={}){const oldStatus=l.status;if(old
 function advanceStage(id){const l=leads.find(x=>x.id===id);if(!l||l.status==="Perdida")return;const idx=MAIN_STAGES.indexOf(l.status);if(idx<0||idx>=MAIN_STAGES.length-1)return;const next=MAIN_STAGES[idx+1];if(next==="Fechada"&&!confirm(`Confirmar o fecho da lead de ${l.name}?`))return;applyStatus(l,next);save();closeModal();renderAll()}
 function fallbackPreviousSnapshot(l){if(l.status==="Perdida")return {status:l.quotedAt?"Orçamento enviado":l.contactedAt?"Contactada":"Nova",contactedAt:l.contactedAt||null,quotedAt:l.quotedAt||null,closedAt:null,lostAt:null,lossReason:"",followUpAt:null};if(l.status==="Fechada")return {status:"Orçamento enviado",contactedAt:l.contactedAt||null,quotedAt:l.quotedAt||null,closedAt:null,lostAt:null,lossReason:"",followUpAt:null};if(l.status==="Orçamento enviado")return {status:"Contactada",contactedAt:l.contactedAt||null,quotedAt:null,closedAt:null,lostAt:null,lossReason:"",followUpAt:l.followUpAt||null};if(l.status==="Contactada")return {status:"Nova",contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:"",followUpAt:l.followUpAt||null};return null}
 function undoStage(id){const l=leads.find(x=>x.id===id);if(!l)return;const previous=l.statusHistory?.length?l.statusHistory.pop():fallbackPreviousSnapshot(l);if(!previous)return;const old=l.status;Object.assign(l,previous);logEvent(l,"undo",`Etapa retrocedida de ${old} para ${l.status}`);save();closeModal();renderAll()}
+function previousStageName(l){
+  const snap=l.statusHistory?.length?l.statusHistory[l.statusHistory.length-1]:fallbackPreviousSnapshot(l)
+  return snap?.status||""
+}
+function nextStageName(l){
+  if(["Fechada","Perdida"].includes(l.status))return "Encerrar lead"
+  const idx=MAIN_STAGES.indexOf(l.status)
+  return idx>=0&&idx<MAIN_STAGES.length-1?MAIN_STAGES[idx+1]:""
+}
+function archiveLead(id){
+  const l=leads.find(x=>x.id===id)
+  if(!l||!["Fechada","Perdida"].includes(l.status)||l.archivedAt)return
+  if(!confirm(`Encerrar a lead de ${l.name}? A lead sai da lista operacional, mas mantém todo o histórico.`))return
+  l.archivedAt=new Date().toISOString()
+  logEvent(l,"archive","Lead encerrada")
+  save();closeModal();renderAll()
+}
+function reopenArchivedLead(id){
+  const l=leads.find(x=>x.id===id);if(!l||!l.archivedAt)return
+  l.archivedAt=null;logEvent(l,"reopen","Lead reaberta na lista operacional");save();renderAll()
+}
 
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
 function showView(v){
@@ -264,7 +374,7 @@ function renderBars(id,items){
 function populateFilters(){
   const ids=["fStatus","fSource","fConsultant","fDestination","fLoss"];const previous=Object.fromEntries(ids.map(id=>[id,document.getElementById(id).value]));
   const opts=(arr)=>arr.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join("");
-  document.getElementById("fStatus").innerHTML='<option value="">Todos os estados</option>'+opts(STATUSES);
+  document.getElementById("fStatus").innerHTML='<option value="">Leads ativas</option><option value="__all__">Todas, incluindo encerradas</option><option value="__archived__">Apenas encerradas</option>'+opts(STATUSES);
   document.getElementById("fSource").innerHTML='<option value="">Todos os canais</option>'+opts(SOURCES);
   document.getElementById("fConsultant").innerHTML='<option value="">Todos os consultores</option>'+opts(CONSULTANTS);
   const ds=[...new Set(leads.flatMap(l=>l.destinations||[]))].sort();
@@ -279,7 +389,7 @@ function filteredLeads(){
     const nameMatch=!q||String(l.name||"").toLowerCase().includes(q);
     const phoneMatch=!!qDigits&&normalizedPhone(l.phone).includes(qDigits);
     return (nameMatch||phoneMatch)&&
-    (!fStatus.value||l.status===fStatus.value)&&(!fSource.value||l.source===fSource.value)&&
+    ((!fStatus.value&&!l.archivedAt)||(fStatus.value==="__all__")||(fStatus.value==="__archived__"&&!!l.archivedAt)||(STATUSES.includes(fStatus.value)&&l.status===fStatus.value&&!l.archivedAt))&&(!fSource.value||l.source===fSource.value)&&
     (!fConsultant.value||l.consultant===fConsultant.value)&&(!fDestination.value||(l.destinations||[]).includes(fDestination.value))&&
     (!fLoss.value||l.lossReason===fLoss.value)&&(!fSla.value||slaClass(l)===fSla.value);
   }).sort((a,b)=>new Date(a.enteredAt)-new Date(b.enteredAt));
@@ -289,18 +399,23 @@ function renderLeads(){
   document.getElementById("leadRows").innerHTML=arr.length?arr.map(l=>{
     const response=l.contactedAt?minutesBetween(l.enteredAt,l.contactedAt):minutesBetween(l.enteredAt,new Date());
     const sc=l.contactedAt?"green":slaClass(l);const safeId=escAttr(l.id);
-    return `<tr>
-      <td>${fmt(l.enteredAt)}</td><td><strong>${esc(l.name)}</strong><br><span style="color:var(--muted)">${esc(l.phone||"Sem telefone")}</span></td>
+    const prev=previousStageName(l),next=nextStageName(l),phone=normalizedPhone(l.phone);
+    const phoneHtml=phone?`<div class="phone-line"><span style="color:var(--muted)">${esc(l.phone)}</span><a class="phone-link" href="tel:${escAttr(phone)}" title="Ligar para ${escAttr(l.name)}" aria-label="Ligar para ${escAttr(l.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"></path></svg></a></div>`:`<div class="phone-line"><span style="color:var(--muted)">Sem telefone</span></div>`;
+    let actionHtml='';
+    if(l.archivedAt){
+      actionHtml=`<button class="btn small" onclick="openLeadModal('${safeId}',true)">Abrir</button><button class="btn small" onclick="reopenArchivedLead('${safeId}')">Reabrir</button>`;
+    }else if(["Fechada","Perdida"].includes(l.status)){
+      actionHtml=`${prev?`<button class="btn small stage-action" onclick="undoStage('${safeId}')" title="Retroceder para ${escAttr(prev)}">← ${esc(prev)}</button>`:""}<button class="btn small primary stage-action" onclick="archiveLead('${safeId}')">Encerrar lead</button><button class="btn small" onclick="openLeadModal('${safeId}',true)">Abrir</button>`;
+    }else{
+      actionHtml=`${prev?`<button class="btn small stage-action" onclick="undoStage('${safeId}')" title="Retroceder para ${escAttr(prev)}">← ${esc(prev)}</button>`:""}${next?`<button class="btn small primary stage-action" onclick="advanceStage('${safeId}')" title="Avançar para ${escAttr(next)}">${esc(next)} →</button>`:""}<button class="btn small danger" onclick="markLost('${safeId}')">Perdida</button><button class="btn small" onclick="openLeadModal('${safeId}',true)">Abrir</button>`;
+    }
+    return `<tr class="${l.archivedAt?'archived-row':''}">
+      <td>${fmt(l.enteredAt)}</td><td><strong>${esc(l.name)}</strong>${phoneHtml}</td>
       <td>${esc(l.source)}</td><td>${esc((l.destinations||[]).join(", "))}</td><td>${esc(l.consultant)}</td>
-      <td><span class="badge ${statusClass(l.status)}">${esc(l.status)}</span>${l.lossReason?`<br><small>${esc(l.lossReason)}</small>`:""}</td>
+      <td><span class="badge ${statusClass(l.status)}">${esc(l.status)}</span>${l.archivedAt?'<br><small>Encerrada</small>':''}${l.lossReason?`<br><small>${esc(l.lossReason)}</small>`:""}</td>
       <td><span class="timer ${sc}">${elapsedLabel(response)}</span></td>
       <td>${l.quotedAt?elapsedLabel(minutesBetween(l.contactedAt,l.quotedAt)):"—"}</td><td>${fmt(l.followUpAt)}</td>
-      <td><div class="quick">
-        <button class="btn small" onclick="location.href='tel:${escAttr(normalizedPhone(l.phone))}'">Ligar</button>
-        <span class="stage-controls"><button class="btn small stage-arrow" onclick="undoStage('${safeId}')" ${l.status==="Nova"&&!l.statusHistory?.length?'disabled':''} title="Retroceder última etapa">←</button><button class="btn small stage-arrow" onclick="advanceStage('${safeId}')" ${["Fechada","Perdida"].includes(l.status)?'disabled':''} title="Avançar para a próxima etapa">→</button></span>
-        ${!["Fechada","Perdida"].includes(l.status)?`<button class="btn small danger" onclick="markLost('${safeId}')">Perdida</button>`:""}
-        <button class="btn small" onclick="openLeadModal('${safeId}',true)">Abrir</button>
-      </div></td></tr>`;
+      <td><div class="quick">${actionHtml}</div></td></tr>`;
   }).join(""):`<tr><td colspan="10" class="empty">Sem resultados</td></tr>`;
 }
 function renderClients(){
@@ -317,7 +432,7 @@ function openLeadModal(id=null,detail=false){
   leadSource.innerHTML=SOURCES.map(x=>`<option>${esc(x)}</option>`).join("");leadConsultant.innerHTML=CONSULTANTS.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.innerHTML=STATUSES.map(x=>`<option>${esc(x)}</option>`).join("");leadStatus.disabled=true;
   const l=id?leads.find(x=>x.id===id):null;
   modalTitle.textContent=l?l.name:"Nova lead";leadId.value=l?.id||"";leadName.value=l?.name||"";leadPhone.value=l?.phone||"";leadEmail.value=l?.email||"";leadSource.value=l?.source||"Instagram";
-  populateDestinationSelect(l?.destinations||[]);leadEnteredAt.value=toLocalInput(l?.enteredAt)||nowLocalInput();leadConsultant.value=l?.consultant||CONSULTANTS[0];leadFollowUp.value=toLocalInput(l?.followUpAt);leadStatus.value=l?.status||"Nova";leadNote.value="";
+  populateDestinationSelect(l?.destinations||[]);closeDestinationDropdown();leadEnteredAt.value=toLocalInput(l?.enteredAt)||nowLocalInput();leadConsultant.value=l?.consultant||CONSULTANTS[0];leadFollowUp.value=toLocalInput(l?.followUpAt);leadStatus.value=l?.status||"Nova";leadNote.value="";
   if(l&&detail)renderLeadDetail(l);else setTimeout(()=>leadName.focus(),0);
 }
 function renderLeadDetail(l){
@@ -326,14 +441,24 @@ function renderLeadDetail(l){
   if(!events.length){if(l.enteredAt)events.push({at:l.enteredAt,text:"Lead criada"});if(l.contactedAt)events.push({at:l.contactedAt,text:"Primeiro contacto efetuado"});if(l.quotedAt)events.push({at:l.quotedAt,text:"Orçamento enviado"});if(l.closedAt)events.push({at:l.closedAt,text:"Lead fechada"});if(l.lostAt)events.push({at:l.lostAt,text:"Lead perdida"})}
   events.sort((a,b)=>new Date(b.at)-new Date(a.at));const safeId=escAttr(l.id);
   leadDetail.innerHTML=`<div class="notice"><strong>${esc(l.status)}</strong> · ${esc(l.source)} · ${esc((l.destinations||[]).join(", "))} · ${esc(l.consultant)}</div>
-  <div class="actions" style="margin-bottom:18px"><button class="btn" onclick="openLeadModal('${safeId}',false)">Editar</button><button class="btn" onclick="undoStage('${safeId}')" ${l.status==="Nova"&&!l.statusHistory?.length?'disabled':''}>← Retroceder etapa</button><button class="btn primary" onclick="advanceStage('${safeId}')" ${["Fechada","Perdida"].includes(l.status)?'disabled':''}>Avançar etapa →</button>${!["Fechada","Perdida"].includes(l.status)?`<button class="btn danger" onclick="markLost('${safeId}')">Marcar perdida</button>`:""}<button class="btn" onclick="addNote('${safeId}')">Adicionar nota</button></div>
+  <div class="actions" style="margin-bottom:18px"><button class="btn" onclick="openLeadModal('${safeId}',false)">Editar</button>${previousStageName(l)?`<button class="btn" onclick="undoStage('${safeId}')">← ${esc(previousStageName(l))}</button>`:""}${!["Fechada","Perdida"].includes(l.status)?`<button class="btn primary" onclick="advanceStage('${safeId}')">${esc(nextStageName(l))} →</button><button class="btn danger" onclick="markLost('${safeId}')">Marcar perdida</button>`:l.archivedAt?`<button class="btn" onclick="reopenArchivedLead('${safeId}')">Reabrir lead</button>`:`<button class="btn primary" onclick="archiveLead('${safeId}')">Encerrar lead</button>`}<button class="btn" onclick="addNote('${safeId}')">Adicionar nota</button></div>
   <h3>Histórico</h3><div class="timeline">${events.map(e=>`<div class="event"><small>${fmt(e.at)}</small><p>${esc(e.text)}</p></div>`).join("")||'<div class="empty">Sem eventos</div>'}</div>`;
   setTimeout(()=>leadDetail.querySelector("button")?.focus(),0);
 }
-function closeModal(){leadModal.classList.add("hidden")}
+function closeModal(){leadModal.classList.add("hidden");closeDestinationDropdown()}
 function closeLossModal(){lossModal.classList.add("hidden");lossLeadId.value=""}
+function openDestinationDropdown(){leadDestinationsDropdown.classList.remove("hidden");leadDestinationsButton.setAttribute("aria-expanded","true");setTimeout(()=>destinationSearch.focus(),0)}
+function closeDestinationDropdown(){leadDestinationsDropdown.classList.add("hidden");leadDestinationsButton.setAttribute("aria-expanded","false")}
+function toggleDestinationDropdown(){leadDestinationsDropdown.classList.contains("hidden")?openDestinationDropdown():closeDestinationDropdown()}
 document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(!lossModal.classList.contains("hidden"))closeLossModal();else if(!leadModal.classList.contains("hidden"))closeModal()});
 leadModal.addEventListener("click",e=>{if(e.target===leadModal)closeModal()});lossModal.addEventListener("click",e=>{if(e.target===lossModal)closeLossModal()});
+leadDestinationsButton.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();toggleDestinationDropdown()});
+leadDestinationsDropdown.addEventListener("click",e=>e.stopPropagation());
+destinationSearch.addEventListener("input",filterDestinationOptions);
+selectAllDestinations.addEventListener("click",selectAllVisibleDestinations);
+clearDestinations.addEventListener("click",clearDestinationSelection);
+document.addEventListener("click",e=>{if(!destinationCombo.contains(e.target))closeDestinationDropdown()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDestinationDropdown()});
 leadForm.onsubmit=e=>{
   e.preventDefault();const id=leadId.value;let l=id?leads.find(x=>x.id===id):null;const phone=normalizedPhone(leadPhone.value);const isNew=!l;const oldConsultant=l?.consultant;
   if(!l){l={id:"L"+Date.now(),clientId:"C"+Date.now(),events:[],notes:[],createdAt:new Date().toISOString(),contactedAt:null,quotedAt:null,closedAt:null,lostAt:null,lossReason:"",status:"Nova"};leads.push(l);logEvent(l,"create","Lead registada no CRM")}
@@ -363,7 +488,6 @@ function saveDestinations(){}
 function cloneData(v){return typeof structuredClone==="function"?structuredClone(v):JSON.parse(JSON.stringify(v))}
 function resetData(){if(confirm("Repor os dados importados do Excel? Será criada uma cópia de segurança.")){downloadBackup(`travel-leads-backup-antes-reposicao-${new Date().toISOString().slice(0,10)}.json`);leads=cloneData(SEED);save();renderAll()}}
 ["fSearch","fStatus","fSource","fConsultant","fDestination","fLoss","fSla"].forEach(id=>document.getElementById(id).addEventListener("input",renderLeads));
-leadDestinations.addEventListener("change",toggleOtherDestination);
 dashPeriod.onchange=renderDashboard;
 setInterval(()=>{if(currentView==="dashboard")renderDashboard();if(currentView==="leads")renderLeads()},60000);
 renderAll();
